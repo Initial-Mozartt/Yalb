@@ -86,7 +86,6 @@ Yalb/
 ├── Yalb/                # Main flavor (balanced)
 ├── Assets/
 │   └── Icon/            # Application icons
-├── IMPLEMENTATION_SUMMARY.md
 ├── README               # This file
 └── ...
 🤝 Contributing
