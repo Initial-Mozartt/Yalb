@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yalb Maeger</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="browser-shell">
+        <div id="chrome">
+            <div id="tabs-row">
+                <div id="tabs-bar"></div>
+                <button id="btnNewTab" class="chrome-button" title="New Tab (Ctrl+T)">+</button>
+                <button id="btnMenu" class="chrome-button" title="History">…</button>
+            </div>
+
+            <div id="toolbar">
+                <button id="btnBack" class="chrome-button" title="Back (Ctrl+Left or Ctrl+[)">←</button>
+                <button id="btnForward" class="chrome-button" title="Forward (Ctrl+Right or Ctrl+])">→</button>
+                <button id="btnReload" class="chrome-button" title="Reload (Ctrl+R)">↻</button>
+
+                <button id="btnBookmarks" class="chrome-button" title="Bookmarks">★</button>
+                <button id="btnDownloads" class="chrome-button" title="Downloads">⬇</button>
+                <button id="btnSettings" class="chrome-button" title="Settings">⚙</button>
+                <button id="btnAddShortcut" class="chrome-button" title="Add Shortcut">＋</button>
+
+                <div id="addressBarWrapper">
+                    <input type="text" id="addressBar" placeholder="Search or type a URL" autocomplete="off" />
+                </div>
+
+                <div id="windowControls">
+                    <button id="btnMinimize" class="window-button" title="Minimize">▁</button>
+                    <button id="btnMaximize" class="window-button" title="Maximize">□</button>
+                    <button id="btnClose" class="window-button close" title="Close">✕</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Yalb - Maeger History</title>
+    <style>
+        body { background: #0a0a0a; color: #e0e0e0; font-family: "Segoe UI", sans-serif; padding: 40px; }
+        h1 { font-size: 24px; font-weight: 300; margin-bottom: 30px; }
+        .entry { padding: 12px 0; border-bottom: 1px solid #1a1a1a; cursor: pointer; }
+        .entry:hover { background: #1a1a1a; }
+        .title { color: #e0e0e0; font-size: 14px; }
+        .url { color: #666; font-size: 11px; margin-top: 2px; }
+        .time { color: #444; font-size: 10px; margin-top: 4px; }
+        #clear { margin-top: 20px; background: #2a1a1a; border-color: #533; color: #c88; }
+        #clear:hover { background: #3a2a2a; }
+    </style>
+</head>
+<body>
+    <h1>History</h1>
+    <div id="list"></div>
+    <button id="clear">Clear All History</button>
+    <script>
+        window.chrome.webview.postMessage({ type: 'loadHistory' });
+        window.chrome.webview.addEventListener('message', (e) => {
+            if (e.data.type !== 'historyData') return;
+
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+
+            if (e.data.entries.length === 0) {
+                const empty = document.createElement('div');
+                empty.style.color = '#666';
+                empty.style.padding = '20px';
+                empty.textContent = 'No history yet';
+                list.appendChild(empty);
+                return;
+            }
+
+            e.data.entries.forEach((h) => {
+                const entry = document.createElement('div');
+                entry.className = 'entry';
+                entry.onclick = () => window.chrome.webview.postMessage({ type: 'navigate', url: h.url });
+
+                const title = document.createElement('div');
+                title.className = 'title';
+                title.textContent = h.title || h.url;
+
+                const url = document.createElement('div');
+                url.className = 'url';
+                url.textContent = h.url;
+
+                const time = document.createElement('div');
+                time.className = 'time';
+                time.textContent = new Date(h.visitedAt).toLocaleString();
+
+                entry.append(title, url, time);
+                list.appendChild(entry);
+            });
+        });
+        document.getElementById('clear').onclick = () => {
+            if (confirm('Clear all history?')) {
+                window.chrome.webview.postMessage({ type: 'clearHistory' });
+            }
+        };
+    </script>
+</body>
+</html>

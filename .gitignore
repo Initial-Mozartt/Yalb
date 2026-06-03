@@ -1,54 +1,6 @@
-publish v1/
-publish v1.1.0/
-publish v1.11.1/
-*.zip
-zip-files/
-publishs-via/
-build-output/
-
-# -----------------------------------------------------------------
-# .NET Build output
-# -----------------------------------------------------------------
-bin/
-obj/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-
-# Publishing / single-file output
-publish/
-*.exe
-*.dll
-*.pdb
-
-# NuGet packages (if you ever use NuGet directly)
-**/packages/*
-
-# -----------------------------------------------------------------
-# Origin Browser – user data (contains personal browsing history,
-# cookies, session tabs, settings, and terminal profiles)
-# -----------------------------------------------------------------
-OriginUserData/
-
-# Also ignore the local settings file if it appears outside the
-# OriginUserData folder (safety net)
-*.settings.json
-
-# -----------------------------------------------------------------
-# IDE / Editor
-# -----------------------------------------------------------------
-.vs/
-.idea/
-*.swp
-*.swo
-*~
-
-# Visual Studio Code (if you ever open the project there)
-.vscode/
-
-# JetBrains Rider
-.idea/
+# ================================
+# Yalb - .gitignore
+# ================================
 
 # -----------------------------------------------------------------
 # OS junk
@@ -58,15 +10,87 @@ Desktop.ini
 .DS_Store
 
 # -----------------------------------------------------------------
-# Zip archives (so you never accidentally commit a release .zip)
+# Logs & temporary files
+# -----------------------------------------------------------------
+*.log
+*.tmp
+*.temp
+
+# -----------------------------------------------------------------
+# Archives
 # -----------------------------------------------------------------
 *.zip
 *.7z
 *.rar
 
 # -----------------------------------------------------------------
-# Logs and temporary files
+# Build output (common .NET)
 # -----------------------------------------------------------------
-*.log
-*.tmp
-*.temp
+bin/
+obj/
+TestResults/
+Coverage/
+
+# -----------------------------------------------------------------
+# .NET user settings (VS)
+# -----------------------------------------------------------------
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.csproj.user
+
+# -----------------------------------------------------------------
+# Visual Studio / IDE
+# -----------------------------------------------------------------
+.vs/
+.idea/
+
+# -----------------------------------------------------------------
+# VS Code
+# -----------------------------------------------------------------
+.vscode/
+
+# -----------------------------------------------------------------
+# JetBrains (some repos use .idea twice; keep safe)
+# -----------------------------------------------------------------
+.idea/
+
+# -----------------------------------------------------------------
+# Origin Browser user data (example from your previous file)
+# -----------------------------------------------------------------
+OriginUserData/
+*.settings.json
+
+# -----------------------------------------------------------------
+# NuGet packages
+# -----------------------------------------------------------------
+**/packages/
+
+# -----------------------------------------------------------------
+# Publishing outputs
+# (keep these generic; your previous file had versioned publish folders)
+# -----------------------------------------------------------------
+publish/
+publish-*/
+
+# Also ignore single-file exe output if produced
+*.exe
+*.dll
+*.pdb
+
+# -----------------------------------------------------------------
+# Any local zip/pack staging folders
+# -----------------------------------------------------------------
+zip-files/
+build-output/
+
+# -----------------------------------------------------------------
+# Misc staging folders from past releases
+# -----------------------------------------------------------------
+publishs-via/
+
+# ================================
+# End
+# ================================
+

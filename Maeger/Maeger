@@ -1,0 +1,650 @@
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                      │
+│  ┌──┐  ● Google  │  ● GitHub  │  ● Docs  │  +  │  …              ☐  □  ✕  │
+│  │⚙ │  ←  →  ⟳  ┌──────────────────────────────────────────────┐                   │
+│  ├──┤           │  https://github.com/...                        │                   │
+│  │☆ │           └──────────────────────────────────────────────┘                   │
+│  ├──┤                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │+ │                    W E B   P A G E   C O N T E N T                         │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  ├──┤                                                                                │
+│  │🕐│                                                                                │
+│  ├──┤                                                                                │
+│  │⬇ │                                                                                │
+│  └──┘                                                                                │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+This is how the browser should look like.
+
+Here is a comprehensive ASCII blueprint of how **Yalb Maeger** should look. This covers **Normal Mode**, **Zen Mode**, the **Sidebar**, **Tab behaviors**, and the **edge-hover zones** — all at true frameless scale.
+
+---
+
+## 1. FULL WINDOW — NORMAL MODE (Chrome Visible)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                      │  ← No Windows title bar. Zero pixels.
+│  ╔════╦══════════════════════════════════════════════════════════════════════════╗    │     DWM shadow only. Window draggable
+│  ║    ║                                                                          ║    │     by grabbing the toolbar area.
+│  ║ SB ║  ● Google  │  ● GitHub  │  ● Docs  │  +  │  …  │  ○ New Tab            ×  ║    │
+│  ║    ╠══════════════════════════════════════════════════════════════════════════╣    │  ← Chrome Panel (32px total)
+│  ║    ║  ←  →  ⟳  ┌──────────────────────────────────────────────┐  ☐  □  ✕  ║    │
+│  ║ 42 ║           │  https://github.com/Initial-Mozartt/Yalb       │           ║    │
+│  ║ px ║           └──────────────────────────────────────────────┘           ║    │
+│  ║    ╚══════════════════════════════════════════════════════════════════════════╝    │
+│  ║    ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  ║    │                                                                          │   │
+│  ║    │                    G I T H U B   P A G E   C O N T E N T                 │   │
+│  ║    │                                                                          │   │
+│  ║    │   ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐         │   │
+│  ║    │   │  Repository     │  │  Issues         │  │  Pull Requests  │         │   │
+│  ║    │   │  Overview       │  │  12 open        │  │  3 merged       │         │   │
+│  ║    │   └─────────────────┘  └─────────────────┘  └─────────────────┘         │   │
+│  ║    │                                                                          │   │
+│  ║    │   README.md contents here...                                               │   │
+│  ║    │   Yalb Browser — Development Roadmap...                                    │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    │                                                                          │   │
+│  ║    └──────────────────────────────────────────────────────────────────────────┘   │
+│  ╚════╩══════════════════════════════════════════════════════════════════════════════╝
+│                                                                                      │
+│  ↑                                                                                   │
+│  └── 1px accent line at hidden edges (Zen hint, very subtle)                        │
+│                                                                                      │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+        ↑
+        └── Resizable border (WM_NCHITTEST: HTLEFT, HTRIGHT, HTTOP, HTBOTTOM)
+```
+
+---
+
+## 2. ZEN MODE — FULL FRAMELESS (Ctrl+Shift+Alt+F)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  ← 4px top edge hover zone
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│     (triggers chrome slide-down)
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  ← 4px bottom edge hover zone
+└──────────────────────────────────────────────────────────────────────────────────────┘
+ ↑                                                                                    ↑
+ └── 4px left edge hover zone                                          4px right edge (resize)
+    (triggers sidebar slide-in)
+```
+
+---
+
+## 3. ZEN MODE — HOVER TOP EDGE (Chrome Slides Down)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│  ╔════════════════════════════════════════════════════════════════════════════════╗  │
+│  ║  ● Google  │  ● GitHub  │  ● Docs  │  +  │  …  │  ○ New Tab            ×  ║  │  ← Chrome slides down
+│  ╠════════════════════════════════════════════════════════════════════════════════╣  │     200ms ease transition
+│  ║  ←  →  ⟳  ┌──────────────────────────────────────────────┐  ☐  □  ✕  ║  │
+│  ║           │  https://github.com/Initial-Mozartt/Yalb       │           ║  │
+│  ╚════════════════════════════════════════════════════════════════════════════════╝  │
+│  ┌────────────────────────────────────────────────────────────────────────────────┐  │
+│  │                                                                                │  │
+│  │                         G I T H U B   C O N T E N T                          │  │
+│  │                                                                                │  │
+│  │                                                                                │  │
+│  │                                                                                │  │
+│  │                                                                                │  │
+│  │                                                                                │  │
+│  │                                                                                │  │
+│  └────────────────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 4. CHROME PANEL DETAIL (32px Toolbar + Tab Strip)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                      │
+│  TAB STRIP (32px)                                                                    │
+│  ╔══════════════════════════════════════════════════════════════════════════════════╗│
+│  ║                                                                                  ║│
+│  ║  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐ ║│
+│  ║  │  ▓▓▓    │  │  ○      │  │  ○      │  │  ○      │  │  ○      │  │    +    │ ║│
+│  ║  │  GitHub │  │  Google │  │  Docs   │  │  YT     │  │  Reddit │  │         │ ║│
+│  ║  │    ×    │  │    ×    │  │    ×    │  │    ×    │  │    ×    │  │         │ ║│
+│  ║  └─────────┘  └─────────┘  └─────────┘  └─────────┘  └─────────┘  └─────────┘ ║│
+│  ║       ↑              ↑            ↑           ↑            ↑                   ║│
+│  ║   ACTIVE TAB    INACTIVE      INACTIVE     INACTIVE      INACTIVE               ║│
+│  ║   (2px accent   (rounded      (rounded      (rounded      (rounded              ║│
+│  ║    top border)   top only)    top only)    top only)    top only)              ║│
+│  ║   #323236 bg    #252528 bg   #252528 bg   #252528 bg   #252528 bg               ║│
+│  ║   connected     slight gap    slight gap    slight gap    slight gap              ║│
+│  ║   to toolbar    to toolbar   to toolbar   to toolbar   to toolbar               ║│
+│  ║                                                                                  ║│
+│  ╠══════════════════════════════════════════════════════════════════════════════════╣│
+│  ║                                                                                  ║│
+│  ║  TOOLBAR (28px address bar sits inside 32px container)                           ║│
+│  ║  ┌──┐ ┌──┐ ┌──┐  ┌────────────────────────────────────────────┐  ┌─┐ ┌─┐ ┌─┐  ║│
+│  ║  │← │ │→ │ │⟳ │  │ https://github.com/Initial-Mozartt/Yalb      │  │☐│ │□│ │✕│  ║│
+│  ║  └──┘ └──┘ └──┘  └────────────────────────────────────────────┘  └─┘ └─┘ └─┘  ║│
+│  ║   26×26            28px height, 12.5px font, #1e1e22 bg              26×26      ║│
+│  ║   4px radius       seamless with toolbar, no border                   buttons   ║│
+│  ║   hover: rgba(255,255,255,0.06)                                       hover same ║│
+│  ║   active: scale(0.96)                                                 active same║│
+│  ║                                                                                  ║│
+│  ╚══════════════════════════════════════════════════════════════════════════════════╝│
+│                                                                                      │
+│  CONTENT AREA                                                                        │
+│  ┌──────────────────────────────────────────────────────────────────────────────────┐│
+│  │                                                                                  ││
+│  │                                                                                  ││
+│  │                                                                                  ││
+│  └──────────────────────────────────────────────────────────────────────────────────┘│
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 5. SIDEBAR DETAIL (42px, Collapsible)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                      │
+│  ┌──┐  ← 42px width                                                                 │
+│  │⚙ │  Settings (top)                                                                │
+│  ├──┤                                                                                │
+│  │☆ │  Bookmarks (top)                                                               │
+│  ├──┤                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │+ │  New Tab (+)   ← center area, vertically centered                              │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  │  │                                                                                │
+│  ├──┤                                                                                │
+│  │🕐│  History (bottom)                                                              │
+│  ├──┤                                                                                │
+│  │⬇ │  Downloads (bottom)                                                             │
+│  └──┘                                                                                │
+│   ↑                                                                                  │
+│   └── 32×32px icon buttons, 6px margin, tooltip on hover                             │
+│       bg: #1c1c1f, border-right: 1px solid #3a3a3e                                   │
+│       hover: bg #252528, 80ms transition                                             │
+│                                                                                      │
+│  Ctrl+Shift+S toggles slide-in/out (150ms transition)                                │
+│  If sidebar hidden: 4px left edge hover → sidebar slides in                            │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 6. TAB STATES (Zoomed In)
+
+```
+PINNED TAB (small, no close button, icon + truncated title)
+┌────────┐
+│ ▓▓▓ Gi…│  ←  icon + 2-3 chars of title
+│        │     no close button
+│════════│  ←  subtle bottom accent border (1px #5b8def)
+└────────┘
+  ↑
+  └── always leftmost, persist across sessions
+
+
+ACTIVE TAB (connected, accent top border)
+┌────────────────┐
+│▓▓▓ GitHub      │  ← 2px top border: #5b8def
+│      ×         │  ← close button, hidden by default
+│                │     fades in on hover (opacity 0→1, 100ms)
+│────────────────│  ← connected to toolbar, NO bottom gap
+│                │
+└────────────────┘
+  bg: #323236
+  font: 11.5px, weight 500
+  radius: 8px 8px 0 0  (rounded top only)
+
+
+INACTIVE TAB (slight gap, darker)
+┌────────────────┐
+│ ○ Google       │
+│      ×         │
+│                │
+└────────────────┘
+  bg: #252528
+  font: 11.5px, weight 400
+  radius: 8px 8px 0 0
+  1px gap below (not connected to toolbar)
+  hover: bg #2a2a2e, translateY(-1px), 80ms
+
+
+NEW TAB ANIMATION
+┌────────────────┐
+│   ○ New Tab    │   frame 0: scale(0.9), opacity 0
+│                │   frame N: scale(1.0), opacity 1
+└────────────────┘   150ms ease-out
+
+
+CLOSE TAB ANIMATION
+┌────────────────┐
+│   ○ Google     │   frame 0: opacity 1, width 140px
+│      ×         │   frame N: opacity 0, width 0
+└────────────────┘   120ms, then DOM removal
+```
+
+---
+
+## 7. COLOR PALETTE MAP
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│  WARM DARK PALETTE (Helium-Inspired)                                                 │
+│                                                                                      │
+│  ┌──────────┐  #1c1c1f  ──  --bg          (warm near-black, window bg)              │
+│  ├──────────┤  #252528  ──  --bg-light     (elevated surfaces, inactive tabs)       │
+│  ├──────────┤  #2e2e32  ──  --bg-lighter   (cards, active tab bg)                   │
+│  ├──────────┤  #1e1e22  ──  --bg-input   (input fields, address bar)               │
+│  ├──────────┤  #3a3a3e  ──  --border      (soft borders, dividers)                 │
+│  ├──────────┤  #e6e6e8  ──  --text        (warm white, primary text)                │
+│  ├──────────┤  #8a8a8e  ──  --text-muted  (muted labels, secondary text)             │
+│  ├──────────┤  #5b8def  ──  --accent      (Helium blue, active tab border)          │
+│  └──────────┘  #7aa7f5  ──  --accent-hover (lighter on hover)                       │
+│                                                                                      │
+│  NO pure black (#000). NO generic blue (#0a84ff). NO emoji icons.                    │
+│  Shadows: rgba(0,0,0,0.15) — warm, low opacity.                                     │
+│  Font: "Segoe UI Variable", "Inter", -apple-system, sans-serif                       │
+│  Font sizes: 11.5px tabs, 12px buttons, 12.5px address bar                           │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 8. NEW TAB PAGE (Minimal)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                      │
+│                                    7 : 42 PM                                         │
+│                                    Monday, June 1                                    │
+│                                                                                      │
+│                                                                                      │
+│              ┌──────────────────────────────────────────────┐                        │
+│              │  Search or type a URL                        │                        │
+│              │                                              │                        │
+│              └──────────────────────────────────────────────┘                        │
+│                        ↑                                                             │
+│                        48px height, 16px font, #1e1e22 bg                            │
+│                        radius: 12px, border: 1px solid #3a3a3e                       │
+│                        focus: border-color #5b8def                                   │
+│                                                                                      │
+│                                                                                      │
+│     ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐                 │
+│     │   ▓▓▓   │  │   ○     │  │   ○     │  │   ○     │  │    +    │                 │
+│     │  GitHub │  │  Google │  │ YouTube │  │  Reddit │  │  Add    │                 │
+│     └─────────┘  └─────────┘  └─────────┘  └─────────┘  └─────────┘                 │
+│        ↑           ↑            ↑            ↑            ↑                          │
+│      #2e2e32    #2e2e32     #2e2e32      #2e2e32      #2e2e32                      │
+│      radius 8px  radius 8px  radius 8px   radius 8px   radius 8px                   │
+│      hover: #323236, 80ms transition                                               │
+│                                                                                      │
+│     Max 8 shortcuts. Solid #1c1c1f background (no wallpaper for minimal).           │
+│     Store in OriginSettings.HomeShortcuts.                                           │
+│                                                                                      │
+│        This is the current homepage                                                  │
+│                                                                                      │
+│                                                                                      │
+│                                                                                      │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 9. FRAMELESS WINDOW — WIN32 MESSAGE FLOW
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  HOW THE TOP BAR ACTUALLY DISAPPEARS (WinForms WndProc)                              │
+│                                                                                      │
+│   Windows sends:                                                                     │
+│                                                                                      │
+│   WM_NCCALCSIZE (0x83)  ──►  Your code returns 0  ──►  "No non-client area"         │
+│        ↑                                                    │                        │
+│        │                                                    ▼                        │
+│   DWM normally draws:                                  Result:                       │
+│   • Title bar (caption)                                • Zero pixels at top          │
+│   • Min/max/close buttons                              • Full window = client area   │
+│   • 1px border line                                    • Shadow stays (NCACTIVATE)  │
+│   • Resize handles                                     • Resize handles (NCHITTEST)   │
+│                                                                                      │
+│   WM_NCHITTEST (0x84)  ──►  Your code checks cursor position:                       │
+│   • Top 8px → HTTOP                                                                  │
+│   • Bottom 8px → HTBOTTOM                                                            │
+│   • Left 8px → HTLEFT                                                                │
+│   • Right 8px → HTRIGHT                                                              │
+│   • Corners → HTCORNER                                                               │
+│   • Toolbar area → HTCAPTION (allows dragging)                                       │
+│   • Content area → HTCLIENT                                                          │
+│                                                                                      │
+│   WM_NCACTIVATE (0x86)  ──►  Pass to base  ──►  Window shadow + focus glow stays     │
+│                                                                                      │
+│   CUSTOM CONTROLS (in chrome-ui/index.html):                                         │
+│   • ☐ minimize  → postMessage(\"minimize\")  → C# WindowState = Minimized            │
+│   • □ maximize  → postMessage(\"maximize\")  → C# ToggleMaximize()                   │
+│   • ✕ close     → postMessage(\"close\")     → C# Close()                            │
+│                                                                                      │
+│   DRAGGING:                                                                          │
+│   • MouseDown on toolbar area → postMessage(\"dragWindow\")                            │
+│   • C# calls ReleaseCapture() + SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0)  │
+│                                                                                      │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 10. WHAT TO CHANGE (Summary Map)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  FILE                  │  CHANGE                                                     │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  YalbLogger.cs         │  CREATE FIRST. Static, thread-safe, %LocalAppData% logs.    │
+│                        │  Time(), Debug(), Info(), Warn(), Error()                   │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  BrowserForm.cs        │  1. Add WndProc override (WM_NCCALCSIZE, WM_NCHITTEST)      │
+│  (split into parts)    │  2. Set FormBorderStyle=None, ControlBox=false, Text=""     │
+│                        │  3. Fix ProcessCmdKey: Ctrl+Shift+Alt+F → full frameless    │
+│                        │  4. Fix ProcessCmdKey: Ctrl+Shift+B → chrome panel          │
+│                        │  5. Fix ProcessCmdKey: Ctrl+Shift+S → sidebar               │
+│                        │  6. Fix startup: _startupComplete flag, no extra tab        │
+│                        │  7. Add dragWindow message handler                          │
+│                        │  8. Add minimize/maximize/close message handlers            │
+│                        │  9. Log EVERY method call                                     │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  chrome-ui/style.css   │  1. Replace palette with warm Helium colors                 │
+│                        │  2. Toolbar height: 32px, tab height: 32px                    │
+│                        │  3. Tab connected to toolbar (active), gap (inactive)         │
+│                        │  4. Button 26×26px, 4px radius, subtle hover                  │
+│                        │  5. Address bar 28px height, 12.5px font, seamless            │
+│                        │  6. Remove emoji icons → CSS shapes / unicode                 │
+│                        │  7. Add tab animations (scale, opacity, width collapse)       │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  chrome-ui/index.html  │  1. Add custom window controls (min/max/close) in toolbar    │
+│                        │  2. Add sidebar container (42px, left edge)                   │
+│                        │  3. Add pin tab indicator                                     │
+│                        │  4. Add favicon img per tab                                   │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  chrome-ui/app.js      │  1. Handle window control clicks → postMessage to C#           │
+│                        │  2. Handle toolbar mousedown → postMessage dragWindow         │
+│                        │  3. Render favicons (fallback to google s2)                   │
+│                        │  4. Tab enter/exit animation classes                        │
+│                        │  5. Edge hover detection for Zen mode reveal                │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  YalbSettings  .cs     │  1. Add SidebarShortcuts list                               │
+│                        │  2. Add HomeShortcuts list (new tab page)                   │
+│                        │  3. Add ZenModeActive bool                                  │
+│                        │  4. Add FramelessWindow bool (default true for Maeger)      │
+│                        │  5. Add SessionTab.Pinned bool                              │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  pages/newtab.html     │  CREATE. Clock, search bar, 8 shortcut tiles, + tile.        │
+│  pages/newtab.css      │  CREATE. Centered layout, #1c1c1f bg, warm muted text.      │
+│  pages/newtab.js       │  CREATE. Clock update, shortcut storage, search handler.    │
+├────────────────────────┼─────────────────────────────────────────────────────────────┤
+│  bangs.json            │  CREATE (embedded resource). Top 20 bangs only.              │
+│                        │  !w, !g, !gh, !yt, !r, !a, !maps, !img, !tr, !chatgpt...   │
+└────────────────────────┴─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 11. KEYBOARD SHORTCUT MAP
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  SHORTCUT                    │  ACTION                                              │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+Alt+F            │  Full Frameless / Zen Mode toggle                    │
+│                              │  (hides title bar + chrome panel + sidebar)          │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+B                │  Toggle Chrome Panel (tabs + address bar)              │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+S                │  Toggle Sidebar (42px left bar)                        │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+P                │  Pin / Unpin current tab                               │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+T                │  Toggle Terminal  ← NOT IN MAEGER (skip)              │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+\\               │  Toggle Split View  ← NOT IN MAEGER (skip)            │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+A                │  Open as App  ← NOT IN MAEGER (skip)                 │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+T                      │  New Tab                                             │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+W                      │  Close Tab                                           │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+L                      │  Focus Address Bar                                   │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Tab / Ctrl+Shift+Tab   │  Next / Previous Tab                                 │
+├──────────────────────────────┼──────────────────────────────────────────────────────┤
+│  Ctrl+Shift+D                │  Toggle Debug Log Panel (optional)                   │
+└──────────────────────────────┴──────────────────────────────────────────────────────┘
+```
+
+---
+
+That's the full blueprint. The key architectural insight is that **the frameless window is not just CSS — it's Win32 message handling**. Without `WM_NCCALCSIZE` returning 0, Windows will always draw at least a 1px line or caption area at the top. The chrome UI (tabs, address bar, window controls) must live entirely inside the WebView2 HTML layer, not as WinForms controls.
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                      │
+│  ┌──┐  zGit│  ▓You│  ○ Docs  │  ○ YT((  │  +  │  …       ☐  □  ✕  │
+│  │⚙ │  ←  →  ⟳  ┌────────────────────────────────────────────────┐  [Cam] [QR] [Dark]│
+│  ├──┤           │  https://github.com/Initial-Mozartt/Yalb       │  [========    ]   │
+│  │☆ │           └────────────────────────────────────────────────┘                   │
+│  ├──┤                                                                                │
+│  │  │  ┌────────────────────────────────────────────────────────────┐                  │
+│  │  │  │  > Quick Actions                                            │                  │
+│  │  │  │  ─────────────────────────────────────────────────────────  │                  │
+│  │  │  │  > New Tab           !w Wikipedia         [Reader Mode]   │                  │
+│  │  │  │  > History           !g Google            [Force Dark]    │                  │
+│  │  │  │  > Downloads         !gh GitHub           [Copy URL]        │                  │
+│  │  │  │  > Bookmarks         !yt YouTube        [Screenshot]      │                  │
+│  │  │  └────────────────────────────────────────────────────────────┘                  │
+│  │+ │                                                                                │
+│  │  │                                                                                │
+│  │  │                    R E A D E R   M O D E                                       │
+│  │  │  ┌────────────────────────────────────────────────────────────┐                  │
+│  │  │  │                                                            │                  │
+│  │  │  │     How to Build a Frameless Browser                       │                  │
+│  │  │  │     ─────────────────────────────                          │                  │
+│  │  │  │     By Initial-Mozartt  ·  5 min read                      │                  │
+│  │  │  │                                                            │                  │
+│  │  │  │     Building a minimal browser requires careful            │                  │
+│  │  │  │     attention to window chrome and native APIs...        │                  │
+│  │  │  │                                                            │                  │
+│  │  │  │     [Reader Mode]  [Original Page]                         │                  │
+│  │  │  └────────────────────────────────────────────────────────────┘                  │
+│  ├──┤                                                                                │
+│  │🕐│        ┌─────────────┐                                                        │
+│  ├──┤        │ |> Video    │  ← Picture-in-Picture                                  │
+│  │⬇ │        │  (floating) │     (always on top, draggable)                           │
+│  └──┘        └─────────────┘                                                        │
+│                                                                                      │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### New Features Shown (Not Mentioned Before)
+
+| Feature | Where in ASCII | What It Is |
+|---|---|---|
+| **Hibernated Tab** | `zGit` — the `z` prefix on the first tab | Tab is "sleeping" — unloaded from RAM to save memory. Click to wake. |
+| **Audio Indicator** | `YT((` — the `((` on the YouTube tab | Small speaker/sound-wave indicator showing which tab is playing audio. |
+| **Download Progress** | `[========    ]` in the toolbar | Active download with a inline progress bar next to the toolbar buttons. |
+| **Screenshot Button** | `[Cam]` in the toolbar | One-click capture of the current page or visible viewport. |
+| **QR / Share Button** | `[QR]` in the toolbar | Generates a QR code for the current URL to share to phone. |
+| **Force Dark Mode** | `[Dark]` toggle in the toolbar | Overrides the website's light theme with a forced dark filter via WebView2. |
+| **Quick Actions / Command Palette** | The floating `> Quick Actions` box | `Ctrl+K` or `Ctrl+Shift+P` opens a spotlight-style overlay to search tabs, history, bookmarks, and run commands without touching the mouse. |
+| **Reader Mode** | The clean article view in the content area | Strips ads, sidebars, and clutter from articles. Activated via the palette or a toolbar button. |
+| **Picture-in-Picture** | The floating `|> Video` box | Video pops out into a small always-on-top window that stays visible while you browse other tabs. Draggable anywhere on screen. |
+
+### Feature Difficulty Rankings (Easiest → Hardest)
+
+| # | Feature | Difficulty | Why |
+|---|---------|-----------|-----|
+| 1 | **Favicons on tabs** | Trivial | WebView2 has `CoreWebView2.FaviconUri` + `FaviconChanged` event. Just add the URL to your JSON payload and render an `<img>` in the HTML tab strip. Fallback to `https://www.google.com/s2/favicons?domain={host}` if empty. |
+| 2 | **Custom app icon** | Trivial | One-line `.csproj` change or project property. If it "didn't work," Windows is caching the old icon in Explorer/Taskbar. |
+| 3 | **Audio indicator** | Easy | WebView2 has `CoreWebView2.IsMuted` and `IsDocumentPlayingAudioChanged` event. Add a boolean to the tab payload, show a small speaker wave icon in HTML when true. |
+| 4 | **Download progress bar** | Easy-Med | WebView2 has `CoreWebView2.DownloadStarting` event. Track active downloads in a list, pass progress to the chrome UI. Requires a small C# download manager class. |
+| 5 | **Force Dark Mode** | Easy-Med | WebView2 has `CoreWebView2.Profile.PreferredColorScheme = Dark`. Also `SetVirtualHostNameToFolderMapping` with a CSS injector, or use the built-in WebView2 auto-dark feature. Mostly a settings toggle. |
+| 6 | **Hibernated tabs** | Medium | Requires unloading the WebView2 (navigate to `about:blank` or dispose the control) while keeping the tab metadata (URL, title, favicon) in memory. On click, recreate the WebView2 and re-navigate. Tricky: restoring scroll position and form state later. |
+| 7 | **Screenshot button** | Medium | WebView2 has `CoreWebView2.CapturePreviewAsync` (PNG stream) or `ShowPrintUI`. Save the stream to a file. Requires a file dialog and async handling. |
+| 8 | **Quick Actions / Command Palette** | Medium-Hard | Needs a new HTML overlay (`Ctrl+K`), a fuzzy search index across tabs/history/bookmarks, and a message bridge back to C#. The UI is easy; building the searchable index and wiring all commands is the work. |
+| 9 | **Reader Mode** | Hard | No native WebView2 API for this. You must inject a JavaScript readability library (like Mozilla's Readability.js) into the page, parse the DOM, extract article content, then render it in a clean internal page. Requires JS injection + DOM parsing + a custom reader template. |
+| 10 | **Picture-in-Picture** | Hard | WebView2 doesn't expose PiP directly. You'd need to spawn a **second tiny borderless WinForms window** with its own WebView2, sync the video element from the main page via JS interop, and keep it always-on-top. Very finicky. |
+| 11 | **QR Code generator** | Medium | Generate a QR bitmap in C# (using a NuGet like `QRCoder` — 1 line of code), then pass the image bytes as base64 to the chrome UI to display in a popup. The hard part is the popup UI, not the QR generation. |
+
+---
+
+### How to Set the App Icon (The Right Way)
+
+If it didn't work, you probably set `this.Icon` on the form but not the **application icon**. Windows Explorer and the Taskbar show the **application icon**, not the form icon.
+
+**Method 1: `.csproj` file (Recommended — this is what Explorer sees)**
+
+Open `Yalb.Maeger.csproj` and add:
+
+```xml
+<PropertyGroup>
+  <ApplicationIcon>Assets\yalb-icon.ico</ApplicationIcon>
+</PropertyGroup>
+
+<ItemGroup>
+  <Content Include="Assets\yalb-icon.ico" />
+</ItemGroup>
+```
+
+Then rebuild. The `.ico` file must be a real multi-resolution icon (16×16, 32×32, 48×48, 256×256). A single PNG renamed to `.ico` will fail silently in some places.
+
+**Method 2: Form icon (Taskbar thumbnail)**
+
+In `BrowserForm.cs` constructor or `Load`:
+
+```csharp
+this.Icon = new Icon("Assets\\yalb-icon.ico");
+```
+
+**If it still doesn't update:** Windows caches application icons aggressively.
+- Right-click the `.exe` → Properties → Change Icon → pick the `.ico` again
+- Or delete `%LocalAppData%\IconCache.db` and restart Explorer
+
+---
+
+### How to Get Favicons on Tabs
+
+**Step 1: Listen in C#**
+
+In your `WebView2` initialization for each tab's content view:
+
+```csharp
+contentWebView.CoreWebView2.FaviconChanged += (s, e) =>
+{
+    var faviconUrl = contentWebView.CoreWebView2.FaviconUri;
+    // Add faviconUrl to your tab model
+    UpdateChromeUIAsync(); // re-serialize tabs with favicon
+};
+```
+
+**Step 2: Add to your JSON payload**
+
+In `UpdateChromeUIAsync()`, include a `favicon` field per tab:
+
+```json
+{
+  "tabs": [
+    { "id": "tab-1", "title": "GitHub", "url": "...", "favicon": "https://github.com/favicon.ico", "active": true }
+  ]
+}
+```
+
+**Step 3: Render in `chrome-ui/index.html`**
+
+In your tab rendering JS:
+
+```javascript
+function renderTab(tab) {
+  const img = tab.favicon 
+    ? `<img src="${tab.favicon}" class="tab-favicon" onerror="this.src='https://www.google.com/s2/favicons?domain=${new URL(tab.url).host}'">`
+    : `<span class="tab-favicon-placeholder"></span>`;
+  
+  return `<div class="tab" data-id="${tab.id}">
+    ${img}
+    <span class="tab-title">${tab.title}</span>
+    <span class="tab-close">×</span>
+  </div>`;
+}
+```
+
+**Fallback rule:** If `favicon` is empty or the image fails to load (`onerror`), use Goo gle's public favicon service: `https://www.google.com/s2/favicons?domain=github.com`. This catches 99% of sites.

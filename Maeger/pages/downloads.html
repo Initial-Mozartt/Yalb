@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Yalb - Maeger Downloads</title>
+    <style>
+        body { background: #0a0a0a; color: #e0e0e0; font-family: "Segoe UI", sans-serif; padding: 40px; }
+        h1 { font-size: 24px; font-weight: 300; margin-bottom: 30px; }
+        p { color: #777; }
+    </style>
+</head>
+<body>
+    <h1>Downloads</h1>
+    <div id="downloadsList"></div>
+
+    <script>
+        function renderDownloads(entries) {
+            const container = document.getElementById('downloadsList');
+            container.innerHTML = '';
+            if (!entries || entries.length === 0) {
+                container.innerHTML = '<p>No downloads yet.</p>';
+                return;
+            }
+            const ul = document.createElement('ul');
+            for (const d of entries) {
+                const li = document.createElement('li');
+                const total = d.totalBytes ? ` / ${d.totalBytes}` : '';
+                li.textContent = `${d.filename} - ${d.status} (${d.bytesReceived}${total})`;
+                ul.appendChild(li);
+            }
+            container.appendChild(ul);
+        }
+
+        if (window.chrome?.webview) {
+            window.chrome.webview.addEventListener('message', (ev) => {
+                const data = ev.data;
+                if (!data) return;
+                if (data.type === 'downloadsData') {
+                    renderDownloads(data.entries);
+                }
+            });
+
+            // Request initial downloads list
+            window.chrome.webview.postMessage({ type: 'loadDownloads' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Yalb - Maeger Settings</title>
+    <style>
+        body { background: #0a0a0a; color: #e0e0e0; font-family: "Segoe UI", sans-serif; padding: 40px; }
+        h1 { font-size: 24px; font-weight: 300; margin-bottom: 30px; }
+        .setting { margin-bottom: 20px; }
+        label { display: block; color: #888; font-size: 12px; margin-bottom: 6px; }
+        input[type="text"], input[type="url"] {
+            width: 100%; max-width: 400px;
+            background: #1a1a1a; border: 1px solid #333;
+            color: #e0e0e0; padding: 8px 12px; font-size: 14px;
+        }
+        input[type="checkbox"] { margin-right: 8px; }
+        button {
+            background: #2a2a2a; border: 1px solid #444;
+            color: #e0e0e0; padding: 10px 24px; cursor: pointer;
+        }
+        button:hover { background: #333; }
+        select {
+            width: 100%; max-width: 400px;
+            background: #1a1a1a; border: 1px solid #333;
+            color: #e0e0e0; padding: 8px 12px; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Maeger Settings</h1>
+    <div class="setting">
+        <label for="homepage">Homepage URL</label>
+        <input type="url" id="homepage" value="">
+    </div>
+    <div class="setting">
+        <label for="searchEngine">Search Engine URL (use {0} for query)</label>
+        <input type="text" id="searchEngine" value="">
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="restoreSession"> Restore last session on startup</label>
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="frameless"> Use frameless window</label>
+    </div>
+    <div class="setting">
+        <label for="theme">Theme</label>
+        <select id="theme">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="auto">Auto</option>
+        </select>
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="showSidebar"> Show sidebar</label>
+    </div>
+    <div class="setting">
+        <label for="tabPosition">Tab Position</label>
+        <select id="tabPosition">
+            <option value="top">Top Bar</option>
+            <option value="sidebar">Sidebar</option>
+            <option value="bottom">Bottom Bar</option>
+        </select>
+    </div>
+    <div class="setting">
+        <label for="sidebarWidth">Sidebar Width (px)</label>
+        <input type="number" id="sidebarWidth" min="48" max="400" value="48">
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="sidebarLabels"> Show sidebar text labels</label>
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="floatingAddressBar"> Floating address bar</label>
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="blockTrackers"> Block trackers</label>
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="blockAds"> Block ads</label>
+    </div>
+    <div class="setting">
+        <label><input type="checkbox" id="hardwareAcceleration"> Hardware acceleration</label>
+    </div>
+    <div class="setting">
+        <label for="downloadPath">Download location</label>
+        <input type="text" id="downloadPath" value="">
+    </div>
+    <button id="save">Save Settings</button>
+    <script>
+        window.chrome.webview.postMessage({ type: 'loadSettings' });
+        window.chrome.webview.addEventListener('message', (e) => {
+            if (e.data.type === 'settingsData') {
+                document.getElementById('homepage').value = e.data.homepage;
+                document.getElementById('searchEngine').value = e.data.searchEngine;
+                document.getElementById('restoreSession').checked = e.data.restoreSession;
+                document.getElementById('frameless').checked = e.data.frameless;
+                document.getElementById('theme').value = e.data.theme || 'dark';
+                document.getElementById('showSidebar').checked = e.data.showSidebar;
+                document.getElementById('tabPosition').value = e.data.tabPosition || 'top';
+                document.getElementById('sidebarWidth').value = e.data.sidebarWidth || 48;
+                document.getElementById('sidebarLabels').checked = e.data.sidebarLabels;
+                document.getElementById('floatingAddressBar').checked = e.data.floatingAddressBar;
+                document.getElementById('blockTrackers').checked = e.data.blockTrackers;
+                document.getElementById('blockAds').checked = e.data.blockAds;
+                document.getElementById('hardwareAcceleration').checked = e.data.hardwareAcceleration;
+                document.getElementById('downloadPath').value = e.data.downloadPath || '';
+            }
+        });
+        document.getElementById('save').onclick = () => {
+            window.chrome.webview.postMessage({
+                type: 'saveSettings',
+                homepage: document.getElementById('homepage').value,
+                searchEngine: document.getElementById('searchEngine').value,
+                restoreSession: document.getElementById('restoreSession').checked,
+                frameless: document.getElementById('frameless').checked,
+                theme: document.getElementById('theme').value,
+                showSidebar: document.getElementById('showSidebar').checked,
+                tabPosition: document.getElementById('tabPosition').value,
+                sidebarWidth: Number(document.getElementById('sidebarWidth').value),
+                sidebarLabels: document.getElementById('sidebarLabels').checked,
+                floatingAddressBar: document.getElementById('floatingAddressBar').checked,
+                blockTrackers: document.getElementById('blockTrackers').checked,
+                blockAds: document.getElementById('blockAds').checked,
+                hardwareAcceleration: document.getElementById('hardwareAcceleration').checked,
+                downloadPath: document.getElementById('downloadPath').value
+            });
+        };
+    </script>
+</body>
+</html>

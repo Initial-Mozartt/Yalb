@@ -1,0 +1,97 @@
+# Yalb Maeger
+
+Maeger is the minimal Windows build of Yalb Browser, built with C# WinForms and Microsoft Edge WebView2.
+
+Start page: https://origin.mozartt.workers.dev/
+Repository: https://github.com/Initial-Mozartt/Yalb
+
+## Features
+
+- WebView2 browsing with multiple tabs.
+- Top tab bar by default, with optional sidebar tab mode.
+- Icon-only tool sidebar for bookmarks, history, downloads, and settings.
+- Floating address bar with keyboard-first navigation.
+- Session restore, local history, and JSON settings.
+- Frameless and fullscreen controls.
+
+## Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+T` | New tab |
+| `Ctrl+W` | Close current tab |
+| `Ctrl+L` | Toggle floating address bar |
+| `Ctrl+R` / `F5` | Reload |
+| `Ctrl+H` | Home |
+| `Ctrl+Left` / `Ctrl+[` | Back |
+| `Ctrl+Right` / `Ctrl+]` | Forward |
+| `Ctrl+Tab` | Next tab |
+| `Ctrl+Shift+Tab` | Previous tab |
+| `F11` | Toggle full screen |
+| `Ctrl+Alt+F` | Toggle frameless window |
+| `Ctrl+Shift+B` | Toggle browser chrome |
+| `Ctrl+Shift+Alt+F` | Full frameless |
+
+## Project Layout
+
+```text
+Maeger/
+├── Yalb.Maeger.csproj
+├── Program.cs
+├── BrowserForm.cs
+├── OriginSettings.cs
+├── YalbSettings.cs
+├── chrome-ui/
+├── pages/
+└── Splash/
+```
+
+## Build
+
+```bash
+cd Maeger
+dotnet build Yalb.Maeger.csproj
+dotnet run --project Yalb.Maeger.csproj
+```
+
+## Publish
+
+```bash
+dotnet publish Yalb.Maeger.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish
+```
+
+## License
+
+GNU GPL.
+
+## Building the Startpage
+
+Prerequisites:
+
+- Node.js 20.x (use `nvm` to manage versions)
+- `pnpm` (install via `npm install -g pnpm`)
+- PowerShell 7+ (for the native installer script)
+
+Quick setup (Windows):
+
+```powershell
+# switch to Node 20
+nvm install 20.20.2
+nvm use 20.20.2
+
+# ensure TEMP is on a drive with space (optional)
+$env:TEMP = 'D:\Temp'
+$env:TMP  = 'D:\Temp'
+
+# set npm cache to a drive with space
+npm config set cache D:\npm-cache --global
+
+cd ..\startpage-src
+Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
+Remove-Item -Force pnpm-lock.yaml -ErrorAction SilentlyContinue
+pnpm install
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-windows-native.ps1
+pnpm --filter @workspace/startpage run build
+```
+
+The build artifacts will be in `startpage-src\artifacts\startpage\dist` and the MSBuild target in the project copies them into the application output under `startpage/dist` during `dotnet build`.
