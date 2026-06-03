@@ -8,7 +8,7 @@
         h1 { font-size: 24px; font-weight: 300; margin-bottom: 30px; }
         .setting { margin-bottom: 20px; }
         label { display: block; color: #888; font-size: 12px; margin-bottom: 6px; }
-        input[type="text"], input[type="url"] {
+        input[type="text"], input[type="url"], input[type="number"] {
             width: 100%; max-width: 400px;
             background: #1a1a1a; border: 1px solid #333;
             color: #e0e0e0; padding: 8px 12px; font-size: 14px;
@@ -24,14 +24,23 @@
             background: #1a1a1a; border: 1px solid #333;
             color: #e0e0e0; padding: 8px 12px; font-size: 14px;
         }
+        .hint { color: #666; font-size: 11px; margin-top: 4px; }
+        .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
     <h1>Maeger Settings</h1>
+
     <div class="setting">
         <label for="homepage">Homepage URL</label>
-        <input type="url" id="homepage" value="">
+        <div class="row">
+            <input type="url" id="homepage" value="" placeholder="Leave empty for built-in startpage">
+            <button type="button" onclick="document.getElementById('homepage').value=''" style="padding:8px 14px; font-size:12px;">Use Default</button>
+        </div>
+        <div class="hint" id="effectiveHomepage"></div>
+        <div class="hint">Fallback chain: custom URL → localhost:3000 → origin.mozartt.dev</div>
     </div>
+
     <div class="setting">
         <label for="searchEngine">Search Engine URL (use {0} for query)</label>
         <input type="text" id="searchEngine" value="">
@@ -85,6 +94,7 @@
         <input type="text" id="downloadPath" value="">
     </div>
     <button id="save">Save Settings</button>
+
     <script>
         window.chrome.webview.postMessage({ type: 'loadSettings' });
         window.chrome.webview.addEventListener('message', (e) => {
@@ -103,6 +113,13 @@
                 document.getElementById('blockAds').checked = e.data.blockAds;
                 document.getElementById('hardwareAcceleration').checked = e.data.hardwareAcceleration;
                 document.getElementById('downloadPath').value = e.data.downloadPath || '';
+
+                const eff = document.getElementById('effectiveHomepage');
+                if (e.data.effectiveHomepage) {
+                    eff.textContent = 'Effective startpage: ' + e.data.effectiveHomepage;
+                } else {
+                    eff.textContent = '';
+                }
             }
         });
         document.getElementById('save').onclick = () => {

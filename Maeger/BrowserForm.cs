@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -40,6 +41,7 @@ public partial class BrowserForm : Form
     private readonly Dictionary<int, WebView2> _tabWebViews = new();
     private readonly Dictionary<int, string> _pendingUrls = new();
     private readonly HashSet<int> _pinnedTabs = new();
+    private readonly HashSet<int> _closingTabs = new();   // FIX: prevent duplicate close spam
     private readonly List<int> _tabOrder = new();
     private int _activeTabId = -1;
     private int _tabIdCounter = 0;
@@ -86,7 +88,6 @@ public partial class BrowserForm : Form
         _splashForm = splashForm;
     }
 
-    // Default constructor – used by Designer and called by the constructor above
     // Default constructor – used by Designer and called by the constructor above
     public BrowserForm()
     {
@@ -173,9 +174,9 @@ public partial class BrowserForm : Form
                 await Task.Delay(200);
             }
 
-            await System.Threading.Tasks.Task.WhenAll(
+            await Task.WhenAll(
                 minDisplay,
-                System.Threading.Tasks.Task.WhenAny(ready.Task, timeout));
+                Task.WhenAny(ready.Task, timeout));
         }
         catch
         {
@@ -192,7 +193,6 @@ public partial class BrowserForm : Form
         if (_browserReadyHandled) return;
         _browserReadyHandled = true;
         YalbLogger.Info("Splash dismissed; showing browser", nameof(BrowserForm));
-
 
         // Close the splash and show the browser
         _splashForm?.Close();
@@ -263,8 +263,6 @@ public partial class BrowserForm : Form
         MouseDown += BrowserForm_MouseDown;
         KeyPress += BrowserForm_KeyPress;
     }
-
-    
 
     private void InitializeVerticalTabs()
     {
@@ -495,12 +493,12 @@ public partial class BrowserForm : Form
         return Math.Clamp(YalbSettings.Instance.SidebarWidth, MinSidebarWidth, MaxSidebarWidth);
     }
 
-    private async System.Threading.Tasks.Task EnsureStartupTabAsync()
+    private async Task EnsureStartupTabAsync()
     {
         await Task.Delay(500);
         if (_tabOrder.Count > 0) return;
 
-        AddNewTab(GetStartpageUrl(), activate: true);
+        await AddNewTabAsync(GetStartpageUrl(), activate: true);
     }
 
     private void BrowserForm_MouseDown(object? sender, MouseEventArgs e)
@@ -522,7 +520,6 @@ public partial class BrowserForm : Form
             }
         }
     }
-
 
     private void BrowserForm_KeyPress(object? sender, KeyPressEventArgs e)
     {
@@ -598,7 +595,7 @@ public partial class BrowserForm : Form
         YalbSettings.Instance.Save();
     }
 
-    private async System.Threading.Tasks.Task InitializeAsync()
+    private async Task InitializeAsync()
     {
         var sw = System.Diagnostics.Stopwatch.StartNew();
         YalbLogger.Info("InitializeAsync started", nameof(BrowserForm));
@@ -660,7 +657,8 @@ public partial class BrowserForm : Form
                 int activeIndex = Math.Clamp(settings.ActiveTabIndex, 0, settings.LastSessionTabs.Count - 1);
                 for (int i = 0; i < settings.LastSessionTabs.Count; i++)
                 {
-                    AddNewTab(settings.LastSessionTabs[i].Url, activate: i == activeIndex);
+                    // FIX: await sequentially so tabs are created in order and activation is deterministic
+                    await AddNewTabAsync(settings.LastSessionTabs[i].Url, activate: i == activeIndex);
                     if (settings.LastSessionTabs[i].Pinned)
                         _pinnedTabs.Add(_tabIdCounter - 1);
                 }
@@ -668,7 +666,7 @@ public partial class BrowserForm : Form
             else
             {
                 YalbLogger.Info($"RestoreLastSession=false or no saved tabs, creating new tab", nameof(BrowserForm));
-                AddNewTab(GetStartpageUrl(), activate: true);
+                await AddNewTabAsync(GetStartpageUrl(), activate: true);
             }
             sessionSw.Stop();
             YalbLogger.Info($"Session tabs restored in {sessionSw.ElapsedMilliseconds}ms", nameof(BrowserForm));
@@ -695,7 +693,6 @@ public partial class BrowserForm : Form
             Refresh();
 
             // Prevent an extra startup tab if we already restored/created tabs above.
-            // EnsureStartupTabAsync() is a fallback, not something we always want to run.
             if (_tabOrder.Count == 0 &&
                 !(_variant == BrowserVariant.Maeger && settings.RestoreLastSession && settings.LastSessionTabs.Count > 0))
             {
@@ -718,9 +715,6 @@ public partial class BrowserForm : Form
         }
     }
 
-    // … every other method from your original file (SnapActiveWebView through IsLikelyUrl)
-    // stays exactly as you pasted them. They are unchanged, so I am not repeating them here.
-    // The only changes are above: constructors merged, old Load handler removed, _loadingLabel removed.
     // ---------------------------------------------------------------------
     // Layout helper: force the active WebView2 to exactly fill the panel.
     // ---------------------------------------------------------------------
@@ -728,8 +722,6 @@ public partial class BrowserForm : Form
     {
         if (_activeTabId != -1 && _tabWebViews.TryGetValue(_activeTabId, out var wv))
         {
-            // ClientRectangle is (0,0, ClientSize.Width, ClientSize.Height).
-            // This guarantees zero gap and no viewport offset.
             wv.Bounds = _contentPanel.ClientRectangle;
         }
     }
@@ -963,11 +955,13 @@ public partial class BrowserForm : Form
     // ---------------------------------------------------------------------
     // Tab Management (Panel-based, explicit Bounds — no Dock on WebView2s)
     // ---------------------------------------------------------------------
-    private async void AddNewTab(string url, bool activate = false)
+    // FIX: Fire-and-forget wrapper for event handlers.  Use AddNewTabAsync when you need to await.
+    private void AddNewTab(string url, bool activate = false) => _ = AddNewTabAsync(url, activate);
+
+    private async Task AddNewTabAsync(string url, bool activate = false)
     {
         YalbLogger.Debug($"AddNewTab called: url={url}, activate={activate}, currentTabCount={_tabOrder.Count}", nameof(BrowserForm));
-        // Do NOT use Dock=Fill. Explicit Bounds prevents the 1-pixel white seam
-        // and viewport offset that causes scroll bounce / hidden top.
+
         var webView = new WebView2
         {
             Visible = false,
@@ -976,12 +970,22 @@ public partial class BrowserForm : Form
         };
 
         _contentPanel.Controls.Add(webView);
-
-        // Size immediately so the first page loads with the correct viewport.
         webView.Bounds = _contentPanel.ClientRectangle;
 
         var tabId = _tabIdCounter++;
-        await webView.EnsureCoreWebView2Async(_contentEnv);
+        YalbLogger.Debug($"Tab {tabId} assigned", nameof(BrowserForm));
+
+        try
+        {
+            await webView.EnsureCoreWebView2Async(_contentEnv);
+        }
+        catch (Exception ex)
+        {
+            YalbLogger.Error($"AddNewTabAsync: WebView2 init failed for tab {tabId}", ex);
+            _contentPanel.Controls.Remove(webView);
+            webView.Dispose();
+            return;
+        }
 
         // Dark scrollbars for web content
         webView.CoreWebView2.Profile.PreferredColorScheme = CoreWebView2PreferredColorScheme.Dark;
@@ -1014,7 +1018,6 @@ public partial class BrowserForm : Form
                 YalbSettings.Instance.Save();
                 _ = PushDownloadsToActiveTabAsync();
 
-                // Update entry progress on bytes changed
                 op.BytesReceivedChanged += (ss, ee) =>
                 {
                     try
@@ -1045,7 +1048,6 @@ public partial class BrowserForm : Form
             }
         };
 
-        // Inject overscroll fix + Vim scroll script
         await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(GetPageInjectionScript());
 
         webView.CoreWebView2.SourceChanged += (s, e) =>
@@ -1074,7 +1076,7 @@ public partial class BrowserForm : Form
 
         _tabWebViews[tabId] = webView;
         _tabOrder.Add(tabId);
-        YalbLogger.Debug($"Tab {tabId} created, total tabs now: {_tabOrder.Count}", nameof(BrowserForm));
+        YalbLogger.Debug($"Tab {tabId} initialized, total tabs now: {_tabOrder.Count}", nameof(BrowserForm));
 
         bool shouldActivate = activate || _activeTabId == -1;
         if (shouldActivate)
@@ -1126,45 +1128,59 @@ public partial class BrowserForm : Form
 
     private void CloseTabById(int tabId)
     {
-        if (!_tabWebViews.TryGetValue(tabId, out var webView)) 
+        // FIX: ignore duplicate close requests (e.g. UI spam)
+        if (_closingTabs.Contains(tabId)) return;
+
+        if (!_tabWebViews.TryGetValue(tabId, out var webView))
         {
             YalbLogger.Warn($"CloseTabById: tab {tabId} not found", nameof(BrowserForm));
             return;
         }
 
-        YalbLogger.Debug($"CloseTabById: closing tab {tabId}, total tabs before: {_tabOrder.Count}", nameof(BrowserForm));
-        _contentPanel.Controls.Remove(webView);
-        webView.Dispose();
-        _tabWebViews.Remove(tabId);
-        _pendingUrls.Remove(tabId);
-        _pinnedTabs.Remove(tabId);
-
-        int index = _tabOrder.IndexOf(tabId);
-        _tabOrder.Remove(tabId);
-
-        if (_activeTabId == tabId)
+        _closingTabs.Add(tabId);
+        try
         {
-            _activeTabId = -1;
-            if (_tabOrder.Count > 0)
-            {
-                int newIndex = Math.Max(0, index - 1);
-                ActivateTab(_tabOrder[newIndex]);
-            }
-            else
-            {
-                YalbLogger.Info($"No tabs remaining, creating new home tab", nameof(BrowserForm));
-                AddNewTab(GetStartpageUrl(), activate: true);
-                return;
-            }
-        }
+            YalbLogger.Debug($"CloseTabById: closing tab {tabId}, total tabs before: {_tabOrder.Count}", nameof(BrowserForm));
+            _contentPanel.Controls.Remove(webView);
+            webView.Dispose();
+            _tabWebViews.Remove(tabId);
+            _pendingUrls.Remove(tabId);
+            _pinnedTabs.Remove(tabId);
 
-        YalbLogger.Debug($"Tab {tabId} closed, total tabs after: {_tabOrder.Count}", nameof(BrowserForm));
-        _ = UpdateChromeUIAsync();
-        SaveSession();
+            int index = _tabOrder.IndexOf(tabId);
+            _tabOrder.Remove(tabId);
+
+            if (_activeTabId == tabId)
+            {
+                _activeTabId = -1;
+                if (_tabOrder.Count > 0)
+                {
+                    int newIndex = Math.Max(0, index - 1);
+                    ActivateTab(_tabOrder[newIndex]);
+                }
+                else
+                {
+                    YalbLogger.Info($"No tabs remaining, creating new home tab", nameof(BrowserForm));
+                    AddNewTab(GetStartpageUrl(), activate: true);
+                    return;
+                }
+            }
+
+            YalbLogger.Debug($"Tab {tabId} closed, total tabs after: {_tabOrder.Count}", nameof(BrowserForm));
+            _ = UpdateChromeUIAsync();
+            SaveSession();
+        }
+        finally
+        {
+            _closingTabs.Remove(tabId);
+        }
     }
 
     private void SwitchToTab(int tabId)
     {
+        // FIX: suppress no-op switches (stops log spam)
+        if (_activeTabId == tabId) return;
+
         if (_tabOrder.Contains(tabId))
         {
             YalbLogger.Debug($"SwitchToTab: from {_activeTabId} to {tabId}", nameof(BrowserForm));
@@ -1219,7 +1235,6 @@ public partial class BrowserForm : Form
         string url;
         if (IsLikelyUrl(input))
         {
-            // Direct navigation
             if (!input.Contains("://") && !input.StartsWith("about:", StringComparison.OrdinalIgnoreCase))
                 url = "https://" + input;
             else
@@ -1227,7 +1242,6 @@ public partial class BrowserForm : Form
         }
         else
         {
-            // Omnibox search -> Google
             string query = Uri.EscapeDataString(input);
             url = $"https://www.google.com/search?q={query}";
         }
@@ -1263,12 +1277,12 @@ public partial class BrowserForm : Form
     // ---------------------------------------------------------------------
     // Chrome UI Communication
     // ---------------------------------------------------------------------
-    private async System.Threading.Tasks.Task UpdateChromeUIAsync()
+    private async Task UpdateChromeUIAsync()
     {
         try
         {
             var webView = GetActiveWebView();
-            if (webView?.CoreWebView2 == null) 
+            if (webView?.CoreWebView2 == null)
             {
                 YalbLogger.Debug($"UpdateChromeUIAsync: no active webview", nameof(BrowserForm));
                 return;
@@ -1297,7 +1311,6 @@ public partial class BrowserForm : Form
             _chromeWebView.CoreWebView2?.PostWebMessageAsJson(json);
             BeginInvoke(() => UpdateVerticalTabs());
 
-            // Update window title
             var currentTitle = _tabWebViews.TryGetValue(_activeTabId, out var activeWv)
                 ? (activeWv.CoreWebView2?.DocumentTitle ?? "Untitled")
                 : "Untitled";
@@ -1315,11 +1328,9 @@ public partial class BrowserForm : Form
         {
             if (_tabWebViews.TryGetValue(tabId, out var wv) && wv?.CoreWebView2 != null)
             {
-                // Try to get favicon URI from WebView2
                 var source = wv.CoreWebView2.Source;
                 if (!string.IsNullOrEmpty(source) && Uri.TryCreate(source, UriKind.Absolute, out var uri))
                 {
-                    // Try standard favicon locations
                     return $"https://{uri.Host}/favicon.ico";
                 }
             }
@@ -1327,19 +1338,27 @@ public partial class BrowserForm : Form
         catch { }
         return string.Empty;
     }
-	
 
     /// <summary>
     /// Returns the best available startpage URL.
-    /// Prefers the local HTTP server (localhost:3000) if running,
-    /// otherwise falls back to the Cloudflare-hosted version.
+    /// 1. Custom homepage (if set)
+    /// 2. Local HTTP server (localhost:3000) if running
+    /// 3. Cloud fallback: https://origin.mozartt.dev/
     /// </summary>
     private static string GetStartpageUrl()
     {
+        var customHome = YalbSettings.Instance.HomePageUrl;
+        if (!string.IsNullOrWhiteSpace(customHome) &&
+            !string.Equals(customHome, "yalb://newtab", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(customHome, "yalb://home", StringComparison.OrdinalIgnoreCase))
+        {
+            return customHome;
+        }
+
         if (StartpageServer.IsRunning)
             return StartpageServer.BaseUrl + "/";
-        
-        return "https://origin.mozartt.workers.dev/";
+
+        return "https://origin.mozartt.dev/";
     }
 
     private void ChromeWebView_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
@@ -1375,13 +1394,13 @@ public partial class BrowserForm : Form
                     break;
 
                 case "closeTab":
-            if (root.TryGetProperty("tabId", out var ctId))
-            {
-                if (_pinnedTabs.Contains(ctId.GetInt32())) return;
-                CloseTabById(ctId.GetInt32());
-            }
-            else
-                CloseActiveTab();
+                    if (root.TryGetProperty("tabId", out var ctId))
+                    {
+                        if (_pinnedTabs.Contains(ctId.GetInt32())) return;
+                        CloseTabById(ctId.GetInt32());
+                    }
+                    else
+                        CloseActiveTab();
                     break;
 
                 case "switchTab":
@@ -1401,8 +1420,9 @@ public partial class BrowserForm : Form
                     GetActiveWebView()?.CoreWebView2?.Reload();
                     break;
 
+                // FIX: use GetStartpageUrl() so empty HomePageUrl doesn't break the home button
                 case "home":
-                    NavigateActiveTab(YalbSettings.Instance.HomePageUrl);
+                    NavigateActiveTab(GetStartpageUrl());
                     break;
 
                 case "focusAddressBar":
@@ -1446,7 +1466,7 @@ public partial class BrowserForm : Form
         }
     }
 
-    private async System.Threading.Tasks.Task PushHistoryToActiveTabAsync()
+    private async Task PushHistoryToActiveTabAsync()
     {
         var history = YalbSettings.Instance.History
             .Take(50)
@@ -1455,16 +1475,21 @@ public partial class BrowserForm : Form
         var payload = new { type = "historyData", entries = history };
         var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         GetActiveWebView()?.CoreWebView2?.PostWebMessageAsJson(json);
-        await System.Threading.Tasks.Task.CompletedTask;
+        await Task.CompletedTask;
     }
 
-    private async System.Threading.Tasks.Task PushSettingsToActiveTabAsync()
+    private async Task PushSettingsToActiveTabAsync()
     {
         var settings = YalbSettings.Instance;
         var payload = new
         {
             type = "settingsData",
-            homepage = settings.HomePageUrl,
+            // FIX: send empty string when using default, and include the resolved effective URL
+            homepage = string.IsNullOrWhiteSpace(settings.HomePageUrl) ||
+                       settings.HomePageUrl.Equals("yalb://newtab", StringComparison.OrdinalIgnoreCase)
+                ? ""
+                : settings.HomePageUrl,
+            effectiveHomepage = GetStartpageUrl(),
             searchEngine = settings.SearchEngineUrl,
             restoreSession = settings.RestoreLastSession,
             frameless = settings.FramelessWindow,
@@ -1480,20 +1505,20 @@ public partial class BrowserForm : Form
             sidebarLabels = settings.SidebarShowLabels
         };
         GetActiveWebView()?.CoreWebView2?.PostWebMessageAsJson(JsonSerializer.Serialize(payload, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
-        await System.Threading.Tasks.Task.CompletedTask;
+        await Task.CompletedTask;
     }
 
-        private async System.Threading.Tasks.Task PushDownloadsToActiveTabAsync()
-        {
-            var downloads = YalbSettings.Instance.Downloads
-                .Take(100)
-                .Select(d => new { d.Url, d.Filename, d.BytesReceived, d.TotalBytes, d.StartedAt, d.Status })
-                .ToList();
-            var payload = new { type = "downloadsData", entries = downloads };
-            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-            GetActiveWebView()?.CoreWebView2?.PostWebMessageAsJson(json);
-            await System.Threading.Tasks.Task.CompletedTask;
-        }
+    private async Task PushDownloadsToActiveTabAsync()
+    {
+        var downloads = YalbSettings.Instance.Downloads
+            .Take(100)
+            .Select(d => new { d.Url, d.Filename, d.BytesReceived, d.TotalBytes, d.StartedAt, d.Status })
+            .ToList();
+        var payload = new { type = "downloadsData", entries = downloads };
+        var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        GetActiveWebView()?.CoreWebView2?.PostWebMessageAsJson(json);
+        await Task.CompletedTask;
+    }
 
     private void SaveSettingsFromContent(
         string homepage,
@@ -1587,9 +1612,6 @@ public partial class BrowserForm : Form
             return true;
         }
 
-        // Title bar only toggle
-        // Title bar (frameless) only toggle
-        // Full frameless / Zen toggle must be checked first to avoid conflicts.
         if (keyData == (Keys.Control | Keys.Shift | Keys.Alt | Keys.F))
         {
             YalbLogger.Debug($"ProcessCmdKey: Ctrl+Shift+Alt+F pressed (FullFramelessToggle)", nameof(BrowserForm));
@@ -1597,7 +1619,6 @@ public partial class BrowserForm : Form
             return true;
         }
 
-        // Chrome panel visibility toggle
         if (keyData == (Keys.Control | Keys.Shift | Keys.B))
         {
             YalbLogger.Debug($"ProcessCmdKey: Ctrl+Shift+B pressed (ToggleChromeVisibility)", nameof(BrowserForm));
@@ -1605,14 +1626,11 @@ public partial class BrowserForm : Form
             return true;
         }
 
-        // Title bar only toggle (no longer uses Ctrl+Alt+F in the Maeger spec)
         if (keyData == (Keys.Control | Keys.Alt | Keys.F))
         {
             YalbLogger.Debug($"ProcessCmdKey: Ctrl+Alt+F pressed (ToggleFrameless legacy: mapping removed by spec)", nameof(BrowserForm));
-            // Intentionally do nothing; Maeger uses Ctrl+Shift+Alt+F.
             return true;
         }
-
 
         if (keyData == (Keys.Control | Keys.Shift | Keys.P))
         {
@@ -1621,7 +1639,6 @@ public partial class BrowserForm : Form
             return true;
         }
 
-        // Sidebar open/close shortcut (Maeger)
         if (keyData == (Keys.Control | Keys.Shift | Keys.S))
         {
             if (_variant == BrowserVariant.Maeger)
@@ -1632,7 +1649,6 @@ public partial class BrowserForm : Form
             return true;
         }
 
-        // Toggle debug log window with Ctrl+` (Oem3)
         if (keyData == (Keys.Control | Keys.Oem3))
         {
             BeginInvoke(() =>
@@ -1660,7 +1676,6 @@ public partial class BrowserForm : Form
 
     private void ToggleChromeVisibility()
     {
-        // Allow toggling even when frameless
         ApplyChromeVisibility(!_chromePanel.Visible, save: true);
     }
 
@@ -1853,12 +1868,10 @@ public partial class BrowserForm : Form
         if (_addressBarFloat.Visible)
         {
             _addressBarFloat.Visible = false;
-            // Return focus to webview
             GetActiveWebView()?.Focus();
             return;
         }
 
-        // Show
         ShowFloatingAddressBar();
         _addressBarInput.SelectAll();
     }
@@ -1878,7 +1891,6 @@ public partial class BrowserForm : Form
             if (bar) { bar.focus(); bar.select(); }
         ");
     }
-
 
     private void ToggleFullScreen()
     {
@@ -1922,13 +1934,11 @@ public partial class BrowserForm : Form
 
         SetContentFramelessState(enableFrameless);
 
-        // Refresh layout — chrome visibility is preserved
         AdjustContentLayout();
         Invalidate();
         Refresh();
     }
 
-    // Full frameless convenience toggle: hide both title bar and chrome
     private void FullFramelessToggle()
     {
         ApplyZenMode(!_zenModeActive, save: true);
@@ -1996,9 +2006,6 @@ public partial class BrowserForm : Form
         AdjustContentLayout();
     }
 
-    // ---------------------------------------------------------------------
-    // Page injection: disable overscroll bounce + dark bg + Vim shortcuts
-    // ---------------------------------------------------------------------
     private static string GetPageInjectionScript()
     {
         return @"
@@ -2006,8 +2013,6 @@ public partial class BrowserForm : Form
     if (window.__yalbInjected) return;
     window.__yalbInjected = true;
 
-    // 1. Kill elastic overscroll / rubber-band and set a dark fallback background
-    //    so the edge-flash is never white, even on pages without a background.
     var style = document.createElement('style');
     style.textContent = `
         html, body { 
@@ -2021,7 +2026,6 @@ public partial class BrowserForm : Form
     `;
     document.head.appendChild(style);
 
-    // 2. Vim-style scroll shortcuts
     document.addEventListener('keydown', function(e) {
         var tag = e.target.tagName;
         if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
@@ -2102,40 +2106,29 @@ public partial class BrowserForm : Form
         YalbSettings.Instance.RecordSession(sessionTabs, Math.Max(0, activeIndex));
     }
 
-    /// <summary>
-    /// Omnibox heuristic: determines whether raw user input is a URL
-    /// or a search query. Mimics Chrome's address-bar logic.
-    /// </summary>
     private bool IsLikelyUrl(string input)
     {
         input = input.Trim();
         if (string.IsNullOrEmpty(input)) return false;
 
-        // Explicit scheme (https://, ftp://, file://, etc.)
         if (input.Contains("://")) return true;
         if (input.StartsWith("about:", StringComparison.OrdinalIgnoreCase)) return true;
 
-        // Extract host part (ignore path/query/fragment for the check)
         int hostEnd = input.IndexOfAny(new[] { '/', '?', '#' });
         string host = hostEnd >= 0 ? input.Substring(0, hostEnd) : input;
 
-        // Strip port if present (e.g. localhost:8080)
         int portIdx = host.LastIndexOf(':');
         string hostNoPort = portIdx >= 0 ? host.Substring(0, portIdx) : host;
 
-        // localhost
         if (hostNoPort.Equals("localhost", StringComparison.OrdinalIgnoreCase)) return true;
 
-        // IPv4 address (with or without port)
         string[] ipParts = hostNoPort.Split('.');
         if (ipParts.Length == 4 &&
             ipParts.All(p => p.Length > 0 && p.Length <= 3 && p.All(char.IsDigit)))
             return true;
 
-        // Contains spaces -> definitely a search query
         if (hostNoPort.Contains(' ')) return false;
 
-        // Domain-like: has a dot and the TLD is 2+ letters
         int lastDot = hostNoPort.LastIndexOf('.');
         if (lastDot > 0 && lastDot < hostNoPort.Length - 1)
         {
