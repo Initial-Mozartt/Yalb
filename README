@@ -1,0 +1,107 @@
+Yalb
+The browser you own, not the one that owns you.
+Yalb is an open-source, privacy-first desktop browser for Windows, built with C# WinForms and Microsoft Edge WebView2. It is keyboard-driven, telemetry-free, and designed to be forked, hacked, and remixed by anyone.
+Because Yalb is open source, anyone can change the code, add onto it, and build their own version. For those who don't want to — or don't know how to — edit and build the code themselves, we publish ready-to-use flavors.
+🧬 The Yalb Family
+Table
+Flavor	Description
+Maeger	Minimal. Fast. No distractions. The stripped-down experience.
+Main	The balanced everyday driver — a thoughtful mix of all features.
+Segfault	Nightly build. Bleeding edge. Preview and pre-release channel.
+Daemon	The kitchen sink. Every option from every version, all at once.
+Onion	Privacy-focused. Built for people who take their anonymity seriously.
+Dev	Built for developers. Tools, integrations, and workflows that actually help.
+Note: Maeger is the first public pre-release. More flavors are coming soon.
+🚀 Quick Start
+Download a Pre-built Flavor
+Go to Releases.
+Download the ZIP for the flavor you want (e.g., Yalb.Maeger-vX.X.X.zip).
+Extract it anywhere.
+Double-click the .exe.
+Requirements: Windows 10 (1709+) or Windows 11 (x64). WebView2 Runtime is pre-installed on Windows 11; Windows 10 users may need the Evergreen Bootstrapper.
+🛠️ Building from Source
+Prerequisites
+.NET 8 SDK
+Node.js (for the startpage)
+pnpm
+Windows 10/11 with WebView2 Runtime
+Clone the Repository
+bash
+git clone https://github.com/Initial-Mozartt/Yalb.git
+cd Yalb
+Build the Startpage
+The browser uses a local startpage server. You need to build it first.
+bash
+cd Yas
+pnpm install --filter @workspace/startpage
+pnpm --filter @workspace/startpage run build
+If the build fails, try again. If it still fails, clean and rebuild:
+bash
+cd
+# This deletes all the previous build things
+Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
+Remove-Item -Force pnpm-lock.yaml -ErrorAction SilentlyContinue
+pnpm install --filter @workspace/startpage
+pnpm --filter @workspace/startpage run build
+Build a Specific Flavor
+Each flavor lives in its own directory. For example, to build Maeger:
+bash
+cd Maeger
+dotnet run
+Or to build and publish a self-contained executable:
+bash
+dotnet publish -c Release -r win-x64 --self-contained true
+The output will be in bin/Release/net8.0-windows/win-x64/publish/.
+⌨️ Keyboard Shortcuts
+Table
+Shortcut	Action
+Ctrl+T	New tab
+Ctrl+W	Close tab
+Ctrl+L	Focus address bar
+Ctrl+R / F5	Reload
+Ctrl+H	Home (start page)
+Ctrl+Left / Ctrl+[	Back
+Ctrl+Right / Ctrl+]	Forward
+Ctrl+Tab / Ctrl+Shift+Tab	Next / Previous tab
+F11	Full screen
+Ctrl+Shift+T	Toggle terminal panel (Main / Daemon / Dev)
+Ctrl+Alt+F	Toggle title bar
+Ctrl+Shift+B	Toggle browser chrome
+Ctrl+Shift+Alt+F	Full frameless (Zen mode)
+Ctrl+Shift+S	Toggle sidebar
+🎨 Features
+Privacy-first — No telemetry, no accounts, no data collection. History stays on your machine.
+Frameless & chrome control — Hide the title bar, the chrome, or both. Zen mode with one keystroke.
+Session restore — Reopen your tabs on launch. Optional.
+Integrated terminal (Main / Daemon / Dev) — Multi-tab terminal with PowerShell, CMD, WSL, and Git Bash support.
+Vim-style scrolling — j/k, Ctrl+d/Ctrl+u, g/G for keyboard navigation.
+Favicons on tabs — Clean, fast visual identification.
+Bookmarks bar — Quick access to your saved pages.
+Tab animations — Smooth entry and exit transitions.
+Debug logging — Comprehensive logs written to %LocalAppData%\Yalb\logs\ for troubleshooting.
+📁 Repository Structure
+plain
+Yalb/
+├── Maeger/              # Minimal flavor
+├── Yalb/                # Main flavor (balanced)
+├── Assets/
+│   └── Icon/            # Application icons
+├── IMPLEMENTATION_SUMMARY.md
+├── README               # This file
+└── ...
+🤝 Contributing
+Issues, ideas, and pull requests are welcome. This project is licensed under the GNU General Public License v2.0 — you are free to use, modify, and share it, as long as any distributed modifications also remain open source under the GPL.
+Fork the repository
+Create a feature branch (git checkout -b feature/amazing-thing)
+Commit your changes (git commit -m 'Add amazing thing')
+Push to the branch (git push origin feature/amazing-thing)
+Open a Pull Request
+📜 License
+GNU General Public License v2.0
+🙏 Acknowledgments
+Built with:
+C# & .NET 8
+Microsoft Edge WebView2
+xterm.js (terminal)
+And a lot of coffee ☕
+"Origin is a minimal, keyboard-driven, privacy-first desktop browser for Windows." — The Yalb philosophy.
