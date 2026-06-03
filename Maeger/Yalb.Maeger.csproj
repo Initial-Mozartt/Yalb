@@ -16,6 +16,28 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2420.47" />
   </ItemGroup>
+  
+  <!-- This copies the manually-copied startpage\dist into the build output -->
+  <ItemGroup>
+    <Content Include="startpage\dist\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>startpage\dist\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
+
+  <!-- Optional: Automatically copy the latest Yas build into the project.
+       Only runs if the Yas dist folder exists.  Remove this target if you
+       prefer to copy manually. -->
+  <Target Name="CopyYasStartpage" BeforeTargets="BeforeBuild"
+          Condition="Exists('D:\ME\PC\Desktop\Workspace\Projects\Yalb\Yas\artifacts\startpage\dist\public')">
+    <ItemGroup>
+      <YasFiles Include="D:\ME\PC\Desktop\Workspace\Projects\Yalb\Yas\artifacts\startpage\dist\public\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(YasFiles)"
+          DestinationFiles="@(YasFiles->'$(MSBuildProjectDirectory)\startpage\dist\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+    <Message Importance="high" Text="Copied updated startpage from Yas." />
+  </Target>
 
   <ItemGroup>
     <None Update="Splash\**\*">
@@ -31,74 +53,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <PropertyGroup>
-    <!-- startpage build + distribution -->
-    <StartpageSourceDir>$(MSBuildThisFileDirectory)..\startpage-src</StartpageSourceDir>
-    <StartpageDistDir>$(StartpageSourceDir)\artifacts\startpage\dist</StartpageDistDir>
-  </PropertyGroup>
-
-  <!-- IMPORTANT:
-       We intentionally do NOT build startpage automatically on every dotnet build.
-       Instead, run explicitly:
-         dotnet build -c Debug -t:BuildStartpageAndCopy
-  -->
-
-  <Target Name="EnsureStartpageNativeDeps">
-    <PropertyGroup>
-      <StartpageInstallScript>$(StartpageSourceDir)\scripts\install-windows-native.ps1</StartpageInstallScript>
-    </PropertyGroup>
-
-    <Message Importance="High"
-             Text="Ensuring startpage native deps (lightningcss) via $(StartpageInstallScript)"
-             Condition="Exists('$(StartpageInstallScript)')" />
-
-    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File "$(StartpageInstallScript)""
-          Condition="Exists('$(StartpageInstallScript)')"
-          ContinueOnError="false" />
-  </Target>
-
-  <Target Name="BuildStartpageAndCopy" DependsOnTargets="EnsureStartpageNativeDeps">
-    <Message Importance="High" Text="Checking Node availability for startpage build..." />
-    <Exec Command="node -e "process.exit(0)"" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="NodeExitCode" />
-    </Exec>
-
-    <Error Condition="'$(NodeExitCode)' != '0'"
-           Text="Node.js is not available on PATH. Install Node 20.x and ensure 'node' is on PATH before building the startpage." />
-
-    <Message Importance="High"
-             Text="Running: pnpm --filter @workspace/startpage run build (working dir: $(StartpageSourceDir))" />
-
-    <Exec Command="pnpm --filter @workspace/startpage run build"
-          WorkingDirectory="$(StartpageSourceDir)"
-          ContinueOnError="false" />
-
-    <ItemGroup>
-      <StartpageFiles Include="$(StartpageDistDir)\**\*.*" Condition="Exists('$(StartpageDistDir)')" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(StartpageFiles)"
-          DestinationFiles="@(StartpageFiles->'$(OutDir)startpage\dist\%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true"
-          Condition="@(StartpageFiles) != ''" />
-
-
-    <Message Importance="High" Text="Startpage built and copied to $(OutDir)startpage\dist" />
-  </Target>
-
-  <Target Name="CopySharedIconIntoProject">
-    <PropertyGroup>
-      <SharedIcon>$(MSBuildThisFileDirectory)..\\Assets\\Icon\\Yalb.Maeger.ico</SharedIcon>
-      <LocalIconDir>$(MSBuildThisFileDirectory)Assets\\Icon\\</LocalIconDir>
-      <LocalIcon>$(LocalIconDir)Yalb.Maeger.ico</LocalIcon>
-    </PropertyGroup>
-
-    <MakeDir Directories="$(LocalIconDir)" Condition="!Exists('$(LocalIconDir)')" />
-    <Copy SourceFiles="$(SharedIcon)"
-           DestinationFiles="$(LocalIcon)"
-           SkipUnchangedFiles="true"
-           Condition="Exists('$(SharedIcon)')" />
-  </Target>
-
 </Project>
