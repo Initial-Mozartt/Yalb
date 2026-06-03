@@ -32,7 +32,8 @@ public class YalbSettings
     public int MaxHistoryEntries { get; set; } = 500;
 
     // --- Preferences ---
-    public string HomePageUrl { get; set; } = "https://origin.mozartt.workers.dev/";
+    // Runtime-resolved via GetStartpageUrl() in BrowserForm.cs
+    public string HomePageUrl { get; set; } = string.Empty;
     public string SearchEngineUrl { get; set; } = "https://www.google.com/search?q={0}";
     public bool FramelessWindow { get; set; } = true;
     public bool ChromeVisible { get; set; } = true;

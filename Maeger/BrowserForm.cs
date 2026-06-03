@@ -500,16 +500,7 @@ public partial class BrowserForm : Form
         await Task.Delay(500);
         if (_tabOrder.Count > 0) return;
 
-        var settings = YalbSettings.Instance;
-        string startUrl = settings.HomePageUrl;
-        if (string.IsNullOrWhiteSpace(startUrl))
-        {
-            startUrl = "yalb://newtab";
-            settings.HomePageUrl = startUrl;
-            settings.Save();
-        }
-
-        AddNewTab(startUrl, activate: true);
+        AddNewTab(GetStartpageUrl(), activate: true);
     }
 
     private void BrowserForm_MouseDown(object? sender, MouseEventArgs e)
@@ -677,14 +668,7 @@ public partial class BrowserForm : Form
             else
             {
                 YalbLogger.Info($"RestoreLastSession=false or no saved tabs, creating new tab", nameof(BrowserForm));
-                string startUrl = settings.HomePageUrl;
-                if (string.IsNullOrWhiteSpace(startUrl))
-                {
-                    startUrl = "yalb://newtab";
-                    settings.HomePageUrl = startUrl;
-                    settings.Save();
-                }
-                AddNewTab(startUrl, activate: true);
+                AddNewTab(GetStartpageUrl(), activate: true);
             }
             sessionSw.Stop();
             YalbLogger.Info($"Session tabs restored in {sessionSw.ElapsedMilliseconds}ms", nameof(BrowserForm));
@@ -868,7 +852,7 @@ public partial class BrowserForm : Form
                     BeginInvoke(() => { PrevTab(); });
                     break;
                 case "newTab":
-                    BeginInvoke(() => AddNewTab(YalbSettings.Instance.HomePageUrl, activate: true));
+                    BeginInvoke(() => AddNewTab(GetStartpageUrl(), activate: true));
                     break;
                 case "closeTab":
                     BeginInvoke(() => CloseActiveTab());
@@ -880,7 +864,7 @@ public partial class BrowserForm : Form
                     BeginInvoke(() => GetActiveWebView()?.CoreWebView2?.Reload());
                     break;
                 case "home":
-                    BeginInvoke(() => NavigateActiveTab(YalbSettings.Instance.HomePageUrl));
+                    BeginInvoke(() => NavigateActiveTab(GetStartpageUrl()));
                     break;
                 case "goBack":
                     BeginInvoke(() => GetActiveWebView()?.CoreWebView2?.GoBack());
@@ -1169,7 +1153,7 @@ public partial class BrowserForm : Form
             else
             {
                 YalbLogger.Info($"No tabs remaining, creating new home tab", nameof(BrowserForm));
-                AddNewTab(YalbSettings.Instance.HomePageUrl, activate: true);
+                AddNewTab(GetStartpageUrl(), activate: true);
                 return;
             }
         }
@@ -1256,27 +1240,22 @@ public partial class BrowserForm : Form
 
     private static string ResolveInternalUrl(string input)
     {
-        if (input.StartsWith("yalb://", StringComparison.OrdinalIgnoreCase))
+        if (!input.StartsWith("yalb://", StringComparison.OrdinalIgnoreCase))
+            return input;
+
+        string pageName = input.Replace("yalb://", "", StringComparison.OrdinalIgnoreCase);
+
+        // newtab / home -> local server or Cloudflare fallback
+        if (string.Equals(pageName, "newtab", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(pageName, "home", StringComparison.OrdinalIgnoreCase))
         {
-            string pageName = input.Replace("yalb://", "", StringComparison.OrdinalIgnoreCase);
-                // If the startpage build was included in output, prefer it for the newtab/home page.
-                if (string.Equals(pageName, "newtab", StringComparison.OrdinalIgnoreCase) || string.Equals(pageName, "home", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Prefer local http server if running so browser features work correctly
-                    if (StartpageServer.IsRunning)
-                    {
-                        return StartpageServer.BaseUrl + "/";
-                    }
-
-                    string startpageIndex = Path.Combine(Application.StartupPath, "startpage", "dist", "index.html");
-                    if (File.Exists(startpageIndex))
-                        return new Uri(startpageIndex).AbsoluteUri;
-                }
-
-                string pagePath = Path.Combine(Application.StartupPath, "pages", pageName + ".html");
-                if (File.Exists(pagePath))
-                    return new Uri(pagePath).AbsoluteUri;
+            return GetStartpageUrl();
         }
+
+        // Other internal pages (settings, history, etc.)
+        string pagePath = Path.Combine(Application.StartupPath, "pages", pageName + ".html");
+        if (File.Exists(pagePath))
+            return new Uri(pagePath).AbsoluteUri;
 
         return input;
     }
@@ -1347,6 +1326,20 @@ public partial class BrowserForm : Form
         }
         catch { }
         return string.Empty;
+    }
+	
+
+    /// <summary>
+    /// Returns the best available startpage URL.
+    /// Prefers the local HTTP server (localhost:3000) if running,
+    /// otherwise falls back to the Cloudflare-hosted version.
+    /// </summary>
+    private static string GetStartpageUrl()
+    {
+        if (StartpageServer.IsRunning)
+            return StartpageServer.BaseUrl + "/";
+        
+        return "https://origin.mozartt.workers.dev/";
     }
 
     private void ChromeWebView_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
